@@ -87,5 +87,5 @@ pipenv run python main.py # windows
 ```
 
 ### Todo list
-- [x] 多线程异步爬取
-- [x] web可视化
+- [ ] 多线程异步爬取
+- [ ] web可视化
