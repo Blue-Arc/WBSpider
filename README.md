@@ -85,3 +85,7 @@ pipenv run python main.py # windows
    [6]     getcomments     Get comments by input num
   ------------------------------------------------------------
 ```
+
+### Todo list
+- [x] 多线程异步爬取
+- [x] web可视化
