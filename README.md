@@ -3,6 +3,7 @@
 1. 通过帐户密码登录，手机端手动验证
 2. 支持cookie文件读取
 3. 支持关键词搜索用户
+5. 支持随机agent替换，防反爬
 4. 爬取用户详细信息
 5. 爬取用户关注和粉丝信息
 6. 爬取用户热点微博及相关评论
@@ -30,20 +31,19 @@ git clone https://github.com/Blue-Arc/WBSpider.git/
 
 ```shell
 pip install pipenv  # windows
-pip3 install pipenv # linux
 ```
 
 - 为项目构建虚拟环境.  
 
 ```shell
+pipenv shell
 pipenv install
 ```
 
-- 尝试运行 smsboom.py  
+- 尝试运行 main.py  
 
 ```shell
-pipenv run python3 main.py  # linux
-pipenv run python main.py # windows
+python main.py # windows
 ```
 
 若无报错，输出帮助信息，则说明环境已经正确安装。
