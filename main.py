@@ -1,9 +1,11 @@
 import json
 from time import sleep
-
+from multiprocessing import Process
 from info import Info
 from utils import bcolors, pwd_input
 from WeiboLogin import loginClient
+
+sign = True
 
 if __name__ == '__main__':
     logo = """
@@ -42,7 +44,11 @@ if __name__ == '__main__':
                     json.dump(cookie,f)
                 print("[+]登录成功")
                 break
+    print("[+]正在验证cookie有效性")
     info = Info(cookie)
+    if (info.cookie_validate()):
+        print("[+]cookie已失效, 请重新登录!")
+        exit(0)
     while True:
         try:
             inputstr = input('{}┌──({}WBSpider😄bluearc{}){}{}{}\n{}└─{}# '.format(
@@ -69,12 +75,27 @@ if __name__ == '__main__':
             print("   [4]    ", "getfriends".ljust(15, " "), "Get target friends")
             print("   [5]    ", "getstatuses".ljust(15, " "), "Get target statuses")
             print("   [6]    ", "getcomments 'num' ".ljust(15, " "), "Get comments by num")
+            print("   [7]    ", "getallcomments".ljust(15, " "), "Get all comments")
             print("  "+ "-"*60)
             continue
         if orderlist[0] == 'set':
             uname = orderlist[1]
-            print("[+]选择目标:%s " % uname,"正在为您搜索相关用户......")
-            uid = info.get_Info(uname)
+            if sign:
+                print("[+]选择目标:%s " % uname,"正在为您搜索相关用户......")
+                uid = info.get_Info(uname)
+                p = Process(target=info.start_surpervise, args=(uid, ))
+                p.start()
+                sign = False
+                continue
+            if p.is_alive:
+                p.terminate()
+                sleep(2)
+                print('检测到目标已更改')
+                p.join()
+                print("[+]选择目标:%s " % uname,"正在为您搜索相关用户......")
+                uid = info.get_Info(uname)
+                p = Process(target=info.start_surpervise, args=(uid, ))
+                p.start()
             continue
         if orderlist[0] == 'showinfo':
             print("个人信息")
@@ -96,6 +117,10 @@ if __name__ == '__main__':
             print("获取当前动态评论")
             num = orderlist[1]
             info.get_Comments(num, uid, json_dict)
+            continue 
+        if orderlist[0] == 'get_all_comments':
+            print("获取所有动态评论")
+            info.get_AllComments(uid)
             continue 
         else:
             print("命令错误,请输入help查看命令")
