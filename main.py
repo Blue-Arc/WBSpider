@@ -21,7 +21,7 @@ if __name__ == '__main__':
     try:
         with open('cookies.json', 'r') as f:
             singal = input("[+]读取到一个cookie信息,是否使用?[Y/N]")
-            if singal == 'N':
+            if singal == 'N' :
                 raise FileNotFoundError
             else:
                 print("[+]用户cookie读取成功!")
@@ -63,12 +63,12 @@ if __name__ == '__main__':
             break
         if orderlist[0] == 'help':
             print("  "+ "-"*60)
-            print("   [1]    ", "set".ljust(15, " "), "Set target")
-            print("   [2]    ", "showinfo".ljust(15, " "), "Show info")
-            print("   [3]    ", "getfollowers".ljust(15, " "), "Get followers")
-            print("   [4]    ", "getfriends".ljust(15, " "), "Get friends")
-            print("   [5]    ", "getstatuses".ljust(15, " "), "Get statuses")
-            print("   [6]    ", "getcomments".ljust(15, " "), "Get comments by input num")
+            print("   [1]    ", "set 'name'".ljust(15, " "), "Set target by name")
+            print("   [2]    ", "showinfo".ljust(15, " "), "Show target info")
+            print("   [3]    ", "getfollowers".ljust(15, " "), "Get target followers")
+            print("   [4]    ", "getfriends".ljust(15, " "), "Get target friends")
+            print("   [5]    ", "getstatuses".ljust(15, " "), "Get target statuses")
+            print("   [6]    ", "getcomments 'num' ".ljust(15, " "), "Get comments by num")
             print("  "+ "-"*60)
             continue
         if orderlist[0] == 'set':
