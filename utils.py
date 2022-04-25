@@ -10,7 +10,7 @@ with open('useragent.txt', 'r', encoding='utf-8') as f:
         agentlist.append(str(line).rstrip('\n'))
         
 class Spider(object):
-    """爬虫类, 内置post,get,get_json方法
+    """爬虫类, 内置post, get, get_json方法
     """
     def __init__(self, Cookie):
         self._session = HTMLSession()
@@ -41,7 +41,7 @@ class Spider(object):
                 json_dict = self.get(url).json()
             except exceptions.JSONDecodeError:
                 print("[+]请求失败,正在重新请求...")
-                sleep(3)
+                sleep(1)
                 flag = True
         return json_dict
 
