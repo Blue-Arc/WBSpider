@@ -17,11 +17,11 @@ if __name__ == '__main__':
     """
     print(logo)
     print("[+]正在读取用户cookie文件......")
-    sleep(2)
+    sleep(1)
     try:
         with open('cookies.json', 'r') as f:
             singal = input("[+]读取到一个cookie信息,是否使用?[Y/N]")
-            if singal == 'N' or 'n':
+            if singal == 'N' or singal == 'n':
                 raise FileNotFoundError
             else:
                 print("[+]用户cookie读取成功!")
