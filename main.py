@@ -21,7 +21,7 @@ if __name__ == '__main__':
     try:
         with open('cookies.json', 'r') as f:
             singal = input("[+]读取到一个cookie信息,是否使用?[Y/N]")
-            if singal == 'N' :
+            if singal == 'N' or 'n':
                 raise FileNotFoundError
             else:
                 print("[+]用户cookie读取成功!")
