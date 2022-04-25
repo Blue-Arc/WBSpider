@@ -77,12 +77,12 @@ python main.py # windows
 ┌──(WBSpider😄bluearc)
 └─# help
   ------------------------------------------------------------
-   [1]     set             Set target
-   [2]     showinfo        Show info
-   [3]     getfollowers    Get followers
-   [4]     getfriends      Get friends
-   [5]     getstatuses     Get statuses
-   [6]     getcomments     Get comments by input num
+   [1]     set 'name'      Set target by name
+   [2]     showinfo        Show target info
+   [3]     getfollowers    Get target followers
+   [4]     getfriends      Get target friends
+   [5]     getstatuses     Get target statuses
+   [6]     getcomments 'num'  Get comments by num
   ------------------------------------------------------------
 ```
 
