@@ -88,5 +88,5 @@ python main.py # windows
 ```
 
 ### Todo list
-- [+] 多线程异步爬取
+- [x] 多线程异步爬取
 - [ ] web可视化
