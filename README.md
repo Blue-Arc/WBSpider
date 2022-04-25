@@ -69,7 +69,7 @@ python main.py # windows
 └─# 
 ```
 
-- 启动轰炸  
+- 启动爬虫  
 
 帮助信息:
 
