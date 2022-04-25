@@ -4,8 +4,10 @@ from utils import Spider
 class Info(object):
     def __init__(self, cookie):
         self.spider = Spider(Cookie=cookie)
+        
     def get_Info(self, name:str):
         """获取用户输入的微博名，搜索相关人物供选择
+        
         Args:
             name (str): 用户名
         Returns:
@@ -21,13 +23,15 @@ class Info(object):
             print(str(i) + '.' + e)
             i += 1
         input_num = eval(input("[+]请输入序号:"))
-        print("[+]您已选择%d号"%input_num)
-        b_s = content.find('button')
-        uid = b_s[input_num-1].attrs['uid']
+        e = obj.html.xpath(f'//*[@id="pl_user_feedList"]/div[{input_num}]/div[2]/div/a',first=True)
+        print("[+]您已选择用户:%s" % e.text)
+        json_dict = self.spider.get_json(f"https://weibo.com/ajax/side/search?q={e.text}")
+        uid = json_dict['data']['user'][0]['uid']
         return uid
-        
+ 
     def show_Info(self, uid:str):
         """根据uid获取人物详细信息
+        
         Args:
             uid (str): 用户uid
         """
@@ -61,6 +65,7 @@ class Info(object):
 
     def get_Friends(self, uid:str):
         """获取关注者信息, 包括用户名、所在地、链接、关注和粉丝数、微博数
+        
         Args:
             uid (str): _description_
         """
@@ -83,6 +88,7 @@ class Info(object):
         
     def get_Followers(self, uid:str):
         """获取粉丝信息, 包括用户名、所在地、链接、关注和粉丝数、微博数
+        
         Args:
             uid (str): _description_
         """
@@ -108,6 +114,7 @@ class Info(object):
         """
         所有发帖和转发贴(如果发帖和转发贴的总量超过10,则只采集前10条),每个帖子的信息包括发帖时间、
         发帖内容、转发次数、评论次数、点赞次数、是否是转发
+        
         Args:
             uid (str): 用户uid
         """
@@ -134,10 +141,11 @@ class Info(object):
                 print("转发内容:%s" % info_dict['retweeted_status']['text_raw'])
             i += 1
         return json_dict
+    
     def get_Comments(self, num:str, uid:str, dic:dict):
         """按照热度排序的前10条评论
         (评论人ID、评论人昵称、评论时间、评论内容、点赞次数)
-
+        
         Args:
             num (str): 动态序号
         """
@@ -157,8 +165,10 @@ class Info(object):
             print("评论时间:%s" % info_dict['created_at'])
             print("评论内容:%s" % info_dict['text'])
             print("点赞数:%s" % info_dict['like_counts'])
-            i += 1            
+            i += 1  
+                      
 if __name__ == "__main__":
     with open('cookies.json','r') as f:
         cookie = json.load(f)
     info = Info(cookie=cookie)
+    print(info.get_Info("赵今麦"))
