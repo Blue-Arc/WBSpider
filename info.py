@@ -25,17 +25,8 @@ class Info(object):
             uid: 用户uid
         """
         obj = self.spider.get(f"https://s.weibo.com/user?q={name}")
-        content = obj.html.find('div#pl_user_feedList', first=True)
-        content_list = content.text.replace('\n',' ').split('关注')
-        content_list.pop(-1)
-        print('[+]为您筛选%d个结果'%(len(content_list)))
-        i = 1
-        for e in content_list:
-            print(str(i) + '.' + e)
-            i += 1
-        input_num = eval(input("[+]请输入序号:"))
+        input_num = 1
         e = obj.html.xpath(f'//*[@id="pl_user_feedList"]/div[{input_num}]/div[2]/div/a',first=True)
-        print("[+]您已选择用户:%s" % e.text)
         json_dict = self.spider.get_json(f"https://weibo.com/ajax/side/search?q={e.text}")
         uid = json_dict['data']['user'][0]['uid']
         return uid

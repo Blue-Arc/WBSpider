@@ -1,4 +1,3 @@
-import msvcrt
 from time import sleep
 from random import choice
 from requests import exceptions 
@@ -49,33 +48,4 @@ class Spider(object):
         global agentlist
         self._headers['User-Agent'] = choice(agentlist)
         return self._headers
-    
-class bcolors: #终端文本颜色设置
-    OKBLUE = '\033[1;94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[5;94m'
-    FAIL = '\033[91m'
-    BLUE = '\033[1;36m'
-    ENDC = '\033[0;36m'
-    BOLD = '\033[1m'
-    RED = '\033[1;31m'
-    RED1 = '\033[0;31m'
-    
-def pwd_input():
-    """实现密码隐藏输入
-    """
-    chars = []
-    while True:
-        newChar = msvcrt.getch().decode(encoding="utf-8")
-        if newChar in '\r\n':  # 如果是换行，则输入结束
-            break
-        elif newChar == '\b':  # 如果是退格，则删除密码末尾一位并且删除一个星号
-            if chars:
-                del chars[-1]
-                msvcrt.putch('\b'.encode(encoding='utf-8'))  # 光标回退一格
-                msvcrt.putch(' '.encode(encoding='utf-8'))  # 输出一个空格覆盖原来的星号
-                msvcrt.putch('\b'.encode(encoding='utf-8'))  # 光标回退一格准备接受新的输入
-        else:
-            chars.append(newChar)
-            msvcrt.putch('*'.encode(encoding='utf-8'))  # 显示为星号
-    return (''.join(chars))
+
