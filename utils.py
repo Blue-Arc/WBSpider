@@ -1,12 +1,18 @@
 from time import sleep
+import os
 from random import choice
 from requests import exceptions 
 from requests_html import HTMLSession
 
 agentlist = list()
+os.chdir("..")
 with open('useragent.txt', 'r', encoding='utf-8') as f:
     for line in f:
         agentlist.append(str(line).rstrip('\n'))
+os.chdir("./flask")
+# with open('useragent.txt', 'r', encoding='utf-8') as f:
+#     for line in f:
+#         agentlist.append(str(line).rstrip('\n'))  
         
 class Spider(object):
     """爬虫类, 内置post, get, get_json方法
@@ -33,14 +39,18 @@ class Spider(object):
         return req
     
     def get_json(self,url):
+        count = 0
         flag = True
         while flag:
             try:
+                if count > 5:
+                    return -1
                 flag = False
+                count += 1
                 json_dict = self.get(url).json()
             except exceptions.JSONDecodeError:
                 print("[+]请求失败,正在重新请求...")
-                sleep(1)
+                sleep(0.5)
                 flag = True
         return json_dict
 

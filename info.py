@@ -1,5 +1,4 @@
 import json
-
 from time import sleep
 from utils import Spider
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -12,9 +11,9 @@ class Info(object):
         url = "https://weibo.com"
         res = self.spider.get(url)
         if res.status_code == "302":
-            return True
+            return 0
         else:
-            return False
+            return 1
         
     def get_Info(self, name:str):
         """获取用户输入的微博名，搜索相关人物供选择
@@ -24,11 +23,19 @@ class Info(object):
         Returns:
             uid: 用户uid
         """
-        obj = self.spider.get(f"https://s.weibo.com/user?q={name}")
-        input_num = 1
-        e = obj.html.xpath(f'//*[@id="pl_user_feedList"]/div[{input_num}]/div[2]/div/a',first=True)
-        json_dict = self.spider.get_json(f"https://weibo.com/ajax/side/search?q={e.text}")
-        uid = json_dict['data']['user'][0]['uid']
+        count = 0
+        while True:
+            if count > 5:
+                return 0 # cookie失效
+            obj = self.spider.get(f"https://s.weibo.com/user?q={name}")
+            input_num = 1 # 默认为搜索的第一个结果
+            e = obj.html.xpath(f'//*[@id="pl_user_feedList"]/div[{input_num}]/div[2]/div/a',first=True)
+            print(e)
+            count += 1
+            if e!= None:
+                break
+        json_dict = self.spider.get_json(f"https://weibo.com/ajax/profile/info?screen_name={e.text}")
+        uid = json_dict['data']['user']['idstr']
         return uid
  
     def show_Info(self, uid:str):
@@ -45,25 +52,23 @@ class Info(object):
         screen_name = obj_dict['data']['user']['screen_name']
         gender = obj_dict['data']['user']['gender']
         weihao = obj_dict['data']['user']['weihao']
-        verified_reason = obj_dict['data']['user']['verified_reason']
+        verified_reason = " "
+        if obj_dict['data']['user']['verified_type'] == 0:
+            verified_reason = obj_dict['data']['user']['verified_reason']
         dscp = obj_dict['data']['user']['description']
         loc = obj_dict['data']['user']['location']
         statuses_count = obj_dict['data']['user']['statuses_count']
-        followers_count = obj_dict['data']['user']['followers_count']
+        followers_count = obj_dict['data']['user']['followers_count_str']
         friends_count = obj_dict['data']['user']['friends_count']
         birthday = d_obj_dict['data']['birthday']
         created_time = d_obj_dict['data']['created_at']
-        print("用户名:%s" % screen_name)
-        print("性别:%s" % genderlist[gender])
-        print("生日:%s" % birthday)
-        print("地址:%s" % loc)
-        print("职业:%s" % verified_reason)
-        print("简介:%s" % dscp)
-        print("粉丝数:%s" % followers_count)
-        print("关注数:%s" % friends_count)
-        print("微号:%s" % weihao)
-        print("微博数量:%s" % statuses_count)
-        print("创建时间:%s" % created_time)
+        avatar = obj_dict['data']['user']['avatar_hd']
+        t1 = [screen_name,genderlist[gender],weihao,verified_reason,dscp,loc,statuses_count,
+            followers_count,friends_count,birthday,created_time,avatar]
+        t2 = ['usname','gender','id','des','pro','address','counts',
+              'fans','friends','birth','time','avatar_url']
+        dic = dict(zip(t2,t1))
+        return dic
 
     def get_Friends(self, uid:str):
         """获取关注者信息, 包括用户名、所在地、链接、关注和粉丝数、微博数
@@ -72,21 +77,7 @@ class Info(object):
             uid (str): _description_
         """
         url = f"https://weibo.com/ajax/friendships/friends?page=1&uid={uid}"
-        # with open('friends.json', 'w+', encoding='utf-8') as f:
-        #     json.dump(json.loads(res.text),f)
-        #     f.close()   
-        json_dict = self.spider.get_json(url)
-        i = 1
-        for info_dict in json_dict['users']:
-            if i>10:break
-            print('*'*50 + str(i) + '*'*50)
-            print("昵称:%s" % info_dict['name'])
-            print("所在地:%s" % info_dict['location'])
-            print("链接:%s" % ("https://weibo.com/"+info_dict['profile_url']))
-            print("关注人数:%s" % info_dict['followers_count'])
-            print("粉丝数:%s" % info_dict['friends_count'])
-            print("微博数:%s" % info_dict['statuses_count'])
-            i += 1
+        return self.spider.get_json(url)
         
     def get_Followers(self, uid:str):
         """获取粉丝信息, 包括用户名、所在地、链接、关注和粉丝数、微博数
@@ -95,22 +86,7 @@ class Info(object):
             uid (str): _description_
         """
         url = f"https://weibo.com/ajax/friendships/friends?relate=fans&page=1&uid={uid}&type=all&newFollowerCount=0"
-        res = self.spider.get(url)
-        # with open('followers.json', 'w+', encoding='utf-8') as f:
-        #     json.dump(json.loads(res.text),f)
-        #     f.close()
-        json_dict = self.spider.get_json(url)
-        i = 1
-        for info_dict in json_dict['users']:
-            if i>10:break
-            print('*'*50 + str(i) + '*'*50)
-            print("昵称:%s" % info_dict['name'])
-            print("所在地:%s" % info_dict['location'])
-            print("链接:%s" % ("https://weibo.com/"+info_dict['profile_url']))
-            print("关注人数:%s" % info_dict['followers_count'])
-            print("粉丝数:%s" % info_dict['friends_count'])
-            print("微博数:%s" % info_dict['statuses_count'])
-            i += 1
+        return self.spider.get_json(url)
 
     def get_Statuses(self, uid:str):
         """
@@ -121,54 +97,35 @@ class Info(object):
             uid (str): 用户uid
         """
         url = f"https://weibo.com/ajax/statuses/mymblog?uid={uid}&page=1&feature=0"
-        # res = self.spider.get(url)
-        # with open('statuses.json', 'w+', encoding='utf-8') as f:
-        #     json.dump(json.loads(res.text),f)
-        #     f.close() 
-        json_dict = self.spider.get_json(url)
-        i = 1
-        for info_dict in json_dict['data']['list']:
-            if i>10:break
-            print('*'*50 + str(i) + '*'*50)
-            retweeted_status = False
-            if 'retweeted_status' in info_dict:
-                retweeted_status = True               
-            print("发帖时间:%s" % info_dict['created_at'])
-            print("发帖内容:%s" % info_dict['text_raw'])
-            print("转发数:%s" % info_dict['reposts_count'])
-            print("评论数:%s" % info_dict['comments_count'])
-            print("点赞数:%s" % info_dict['attitudes_count'])
-            print("是否为转发:%s" % retweeted_status)
-            if retweeted_status:
-                print("转发内容:%s" % info_dict['retweeted_status']['text_raw'])
-            i += 1
-        return json_dict
+        return self.spider.get_json(url)
     
-    def get_Comments(self, num:str, uid:str, dic:dict):
+    def get_Comments(self, uid:str, dic:dict):
         """按照热度排序的前10条评论
         (评论人ID、评论人昵称、评论时间、评论内容、点赞次数)
         
         Args:
             num (str): 动态序号
         """
-        sid = dic['data']['list'][int(num)-1]['id']
-        print("#"*50 + num + "#"*50)
-        print("发帖内容:%s" % dic['data']['list'][int(num)-1]['text_raw'])
-        url = f"https://weibo.com/ajax/statuses/buildComments?is_reload=1&id={sid}&is_show_bulletin=2&is_mix=0&count=10&uid={uid}"
-        # with open('comments.json', 'w+', encoding='utf-8') as f:
-        #     json.dump(json.loads(res.text),f)
-        #     f.close() 
-        json_dict = self.spider.get_json(url)
-        i = 1
-        for info_dict in json_dict['data']:
-            if i>10:break
-            print('*'*50 + str(i) + '*'*50)            
-            print("昵称:%s" % info_dict['user']['name'])
-            print("ID:%s" % info_dict['user']['id'])
-            print("评论时间:%s" % info_dict['created_at'])
-            print("评论内容:%s" % info_dict['text'])
-            print("点赞数:%s" % info_dict['like_counts'])
-            i += 1  
+        Comments_dict = []
+        for i in range(0,10):
+            comments_dict = []
+            comment_dict = {}
+            sid = dic['data']['list'][i]['id']
+            url = f"https://weibo.com/ajax/statuses/buildComments?is_reload=1&id={sid}&is_show_bulletin=2&is_mix=0&count=10&uid={uid}"
+            json_dict = self.spider.get_json(url)
+            j = 1
+            for info_dict in json_dict['data']:
+                if j>10:break
+                name = info_dict['user']['name']
+                uid = info_dict['user']['id']
+                time = info_dict['created_at']
+                text = info_dict['text']
+                likes = info_dict['like_counts']
+                comment_dict = {"name":name, "id":uid, "time":time, "text":text, "likes":likes}
+                comments_dict.append(comment_dict)
+                j += 1
+            Comments_dict.append(comments_dict)
+        return Comments_dict
             
     def get_AllComments(self, uid:str):
         """获取所有动态及其评论
@@ -224,6 +181,8 @@ class Info(object):
 if __name__ == "__main__":
     with open('cookies.json','r') as f:
         cookie = json.load(f)
+    uid = "6512991534"
     info = Info(cookie=cookie)
-    # print(info.get_Info("赵今麦"))
-    info.get_Statuses("7395299383")
+    dicts = info.get_Statuses(uid)
+    with open("test.json", "w+") as f:
+        json.dump(info.get_Comments(uid,dicts),f)
