@@ -1,17 +1,14 @@
-from urllib import response
 from flask import Flask, jsonify, request, Response
 from flask_cors import *
 from flask import render_template #引入模板插件
 
 import json
-import sys
-sys.path.append("..")  
 from main import execute
 from info import Info
 
 app = Flask(__name__,
-static_folder='../vue/static',  # 设置静态文件夹目录
-template_folder = "../vue")  # 设置vue编译输出目录dist文件夹，为Flask模板文件目录
+static_folder='vue/static',  # 设置静态文件夹目录
+template_folder = "vue")  # 设置vue编译输出目录dist文件夹，为Flask模板文件目录
 CORS(app, supports_credentials=True) # 跨域解决方案
 
 global cookie
@@ -25,7 +22,7 @@ statuses_dict = ""
 
 def get_Cookie():
     try:
-        with open('../cookies.json', 'r') as f:
+        with open('cookies.json', 'r') as f:
             cookie = json.load(f)
             return cookie
     except FileNotFoundError:
@@ -50,7 +47,7 @@ def login():
         if cookie == -1:
             return Response("-1")
         else:
-            with open('../cookies.json', 'w+') as f:
+            with open('cookies.json', 'w+') as f:
                 json.dump(cookie, f)
             return Response("0")
     else:
@@ -68,7 +65,8 @@ def search():
         uname = data.get("uname")
         uid = info.get_Info(uname)
         if uid == 0:
-            return response(0)
+            print("[+] cookie已失效,请重新登录")
+            return Response("-1")
         else:
             res = info.show_Info(uid)
             return jsonify(res)

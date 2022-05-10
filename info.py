@@ -30,7 +30,6 @@ class Info(object):
             obj = self.spider.get(f"https://s.weibo.com/user?q={name}")
             input_num = 1 # 默认为搜索的第一个结果
             e = obj.html.xpath(f'//*[@id="pl_user_feedList"]/div[{input_num}]/div[2]/div/a',first=True)
-            print(e)
             count += 1
             if e!= None:
                 break

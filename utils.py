@@ -1,18 +1,12 @@
 from time import sleep
-import os
 from random import choice
 from requests import exceptions 
 from requests_html import HTMLSession
 
 agentlist = list()
-os.chdir("..")
 with open('useragent.txt', 'r', encoding='utf-8') as f:
     for line in f:
-        agentlist.append(str(line).rstrip('\n'))
-os.chdir("./flask")
-# with open('useragent.txt', 'r', encoding='utf-8') as f:
-#     for line in f:
-#         agentlist.append(str(line).rstrip('\n'))  
+        agentlist.append(str(line).rstrip('\n'))  
         
 class Spider(object):
     """爬虫类, 内置post, get, get_json方法
