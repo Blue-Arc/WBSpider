@@ -38,8 +38,9 @@ pip install pipenv  # windows
 - 为项目构建虚拟环境.  
 
 ```shell
-pipenv shell
-pipenv install
+pipenv --python 3.8 #创建python3.8环境
+pipenv shell # 进入虚拟环境
+pipenv install # 安装依赖包
 ```
 
 - 尝试运行   
