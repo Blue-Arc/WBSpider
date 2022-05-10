@@ -24,30 +24,39 @@ git clone https://github.com/Blue-Arc/WBSpider.git/
 > git clone https://github.do/https://github.com/Blue-Arc/WBSpider.git
 > ```
 
-
 ### 配置环境  
+
+#### 直接使用
+
+```bash
+pip install --upgrade pip # 更新pip
+pip install -r requirements.txt # 安装依赖库
+python app.py
+```
+
+------
+
+#### Pipenv虚拟环境(推荐)
 
 > **请确保自己的电脑有 `python3.x` 的环境,推荐使用 `3.8` 及以上！**  
 
 - 安装 pipenv 包管理工具.  
 
 ```shell
-pip install pipenv  # windows
+pip install pipenv
 ```
 
 - 为项目构建虚拟环境.  
 
 ```shell
-pipenv --python 3.8 #创建python3.8环境
-pipenv shell # 进入虚拟环境
+pipenv --python three #创建python3环境
 pipenv install # 安装依赖包
 ```
 
 - 尝试运行   
 
 ```shell
-cd flask
-python app.py # windows
+python app.py 
 ```
 
 若无报错，输出帮助信息，则说明环境已经正确安装。
