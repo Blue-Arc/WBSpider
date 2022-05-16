@@ -15,10 +15,7 @@ global cookie
 global info
 global uid
 global statuses_dict
-cookie = ""
-info = ""
-uid = ""
-statuses_dict = ""
+
 
 def get_Cookie():
     try:
@@ -96,6 +93,17 @@ def comments():
     if request.method == 'GET':
         res = info.get_Comments(uid, statuses_dict)
         return jsonify(res)    
-     
+
+@app.route("/api/check", methods=['GET'])
+def check():
+    global statuses_dict
+    if request.method == 'GET':
+        res = info.check(uid, statuses_dict)
+        if res == -1:
+            return Response("-1")
+        else:
+            statuses_dict = res
+            return jsonify(res)
+            
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,4 +1,5 @@
 import json
+
 from time import sleep
 from utils import Spider
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -154,34 +155,34 @@ class Info(object):
                 futures.append(pool.submit(self.get_Comments, i, uid, json_dict))       
                 i += 1 
             as_completed(futures)
-            
-    def start_surpervise(self, uid:str):
+
+    def check(self, uid:str, dicts:dict):
         """实时监控动态的更新变化
 
         Args:
             uid (str): 用户uid
+            dicts(dict): 原始动态
         """
+        print("[+]正在监控目标...")
         url = f"https://weibo.com/ajax/statuses/mymblog?uid={uid}&page=1&feature=0"
+        json_dict = dicts
+        # 更新id值
+        if("isTop" in json_dict["data"]["list"][0]): # 置顶动态更新后不变
+            id = json_dict["data"]["list"][1]['id']
+        else:
+            id = json_dict["data"]["list"][0]['id'] # 获取原来第一条动态id值
         json_dict = self.spider.get_json(url)
-        while True:
-            # 更新id值
-            flag = False
-            if("isTop" in json_dict["data"]["list"][0]): # 置顶动态更新后不变
-                id = json_dict["data"]["list"][1]['id']
-            else:
-                id = json_dict["data"]["list"][0]['id']
-            sleep(30)
-            json_dict = self.spider.get_json(url)
-            if (id != json_dict["data"]["list"][0]['id']):
-                flag = True
-            if flag: print("[+]目标动态已更新, 请及时查看")
+        if (id != json_dict["data"]["list"][0]['id']):
+            print("[+]目标动态已更新, 请及时查看")
+            return json_dict
+        else:
+            print("[+]目标动态尚未更新, 请稍后...")
+            return -1              
                     
              
 if __name__ == "__main__":
     with open('cookies.json','r') as f:
         cookie = json.load(f)
-    uid = "6512991534"
+    uid = "7383498934"
     info = Info(cookie=cookie)
-    dicts = info.get_Statuses(uid)
-    with open("test.json", "w+") as f:
-        json.dump(info.get_Comments(uid,dicts),f)
+    info.start_surpervise(uid)
