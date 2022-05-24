@@ -1,6 +1,4 @@
 import json
-
-from time import sleep
 from utils import Spider
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -60,13 +58,15 @@ class Info(object):
         statuses_count = obj_dict['data']['user']['statuses_count']
         followers_count = obj_dict['data']['user']['followers_count_str']
         friends_count = obj_dict['data']['user']['friends_count']
+        avatar = obj_dict['data']['user']['avatar_hd']
+        profile_url = obj_dict['data']['user']['profile_url']
         birthday = d_obj_dict['data']['birthday']
         created_time = d_obj_dict['data']['created_at']
-        avatar = obj_dict['data']['user']['avatar_hd']
-        t1 = [screen_name,genderlist[gender],weihao,verified_reason,dscp,loc,statuses_count,
-            followers_count,friends_count,birthday,created_time,avatar]
-        t2 = ['usname','gender','id','des','pro','address','counts',
-              'fans','friends','birth','time','avatar_url']
+        ip = d_obj_dict['data']['ip_location']
+        t1 = [screen_name,genderlist[gender],weihao,verified_reason,dscp,loc,ip,statuses_count,
+            followers_count,friends_count,birthday,created_time,avatar,profile_url]
+        t2 = ['usname','gender','id','des','pro','address','ip','counts',
+              'fans','friends','birth','time','avatar_url','profile_url']
         dic = dict(zip(t2,t1))
         return dic
 

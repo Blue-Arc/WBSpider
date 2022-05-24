@@ -1,4 +1,5 @@
 from time import sleep
+import json
 from random import choice
 from requests import exceptions 
 from requests_html import HTMLSession
@@ -24,12 +25,18 @@ class Spider(object):
         self._cookie = Cookie
         
     def get(self, url):
+        with open('ip.json','r',encoding='utf-8') as f:
+            proxylist = json.load(f)
         try :
-            req = self._session.get(url, headers=self.change_agent(), cookies=self._cookie)
-        except exceptions.Timeout as e:
-            print('请求超时：'+str(e.message))
-        except exceptions.HTTPError as e:
-            print('http请求错误:'+str(e.message))
+            proxy = choice(proxylist)
+            print(f"[+]正在使用代理: {proxy}")
+            req = self._session.get(url, headers=self.change_agent(), cookies=self._cookie, proxies=proxy)
+        except exceptions.ConnectionError:
+            print('[+]代理请求失败...')
+        except exceptions.Timeout:
+            print('[+]代理请求超时...')  
+        except:
+            print('[+]未知错误')
         return req
     
     def get_json(self,url):

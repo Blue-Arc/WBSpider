@@ -5,6 +5,7 @@ from flask import render_template #引入模板插件
 import json
 from main import execute
 from info import Info
+from proxy import get_proxy
 
 app = Flask(__name__,
 static_folder='vue/static',  # 设置静态文件夹目录
@@ -50,6 +51,14 @@ def login():
     else:
         return Response("-1")
 
+@app.route("/api/proxy", methods=['GET'])
+def proxy():
+    if request.method == 'GET':
+        res = get_proxy()
+        if res == 1:
+            return Response("1")
+        else:
+            return Response("-1")
 @app.route("/api/search", methods=['POST'])
 def search():
     global uid
