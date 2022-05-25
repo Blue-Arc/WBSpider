@@ -55,10 +55,9 @@ def login():
 def proxy():
     if request.method == 'GET':
         res = get_proxy()
-        if res == 1:
-            return Response("1")
-        else:
-            return Response("-1")
+        return Response(str(res))
+    
+
 @app.route("/api/search", methods=['POST'])
 def search():
     global uid
